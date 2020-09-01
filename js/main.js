@@ -39,7 +39,9 @@ window.onload = function () {
 
     //フレームごとに実行
     core.rootScene.addEventListener(Event.ENTER_FRAME, function () {
-      kuma.frame++;
+      if (core.frame % core.fps == 0) {
+        kuma.frame++;
+      }
       if (kuma.frame === 3) {
         kuma.frame = 0;
       }

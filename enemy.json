@@ -1,0 +1,7 @@
+{
+  "name": "enemylist",
+  "enemies": [
+    { "name": "売上", "hp": 10 },
+    { "name": "借入金", "hp": 20 }
+  ]
+}

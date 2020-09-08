@@ -52,6 +52,7 @@ window.onload = function () {
   core.keybind(17, "ctrl");
   core.keybind(32, "space");
   core.keybind(65, "a");
+  core.keybind(67, "c");
 
   core.rootScene.addChild(scoremessage);
 

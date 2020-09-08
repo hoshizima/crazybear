@@ -3,13 +3,20 @@ const coreSCENEWIDTH = 640;
 const coreSCENEHEIGHT = 640;
 const SURFACEWIDTH = 640;
 const SURFACEHEIGHT = 640;
+const CHARACTORREALWIDTH = 46;
+const CHARACTORREALHEIGHT = 34;
 const CHARACTORWIDTH = 64;
 const CHARACTORHEIGHT = 64;
-const CHARACTORFIRST_X = -8;
-const CHARACTORFIRST_Y = -15;
+const CHARACTORFIRST_X = 312;
+const CHARACTORFIRST_Y = 223;
 const CHARACTORHP = 100;
 const CHARACTORAP = 100;
-const MOVE_DISTANCE = 32;
+const MOVE_DISTANCE_X = 46;
+const MOVE_DISTANCE_Y = 34;
+
+var charactorappearance_x = [];
+var charactorappearance_y = [];
+var enemies = [];
 
 /*メイン処理開始*/
 enchant();
@@ -19,6 +26,7 @@ window.onload = function () {
   core.fps = 30;
   core.preload("./img/cellgirl_body.png");
   core.preload("./img/cellgirl_ribbon.png");
+
   //背景にマス目を表示。
   var background = new Sprite(SURFACEWIDTH, SURFACEHEIGHT);
   var surface = new Surface(SURFACEWIDTH, SURFACEHEIGHT);
@@ -27,11 +35,13 @@ window.onload = function () {
   context.beginPath();
   context.strokeStyle = "rgb(255, 255, 255)";
   context.lineWidth = 1;
-  for (i = 1; i < 640; i = i + CHARACTORWIDTH) {
-    context.moveTo((i * 6) / 8, 0);
-    context.lineTo((i * 6) / 8, SURFACEHEIGHT);
-    context.moveTo(0, i / 2);
-    context.lineTo(SURFACEWIDTH, i / 2);
+  for (var i = 0; i < 20; i++) {
+    charactorappearance_x[i] = i * CHARACTORREALWIDTH;
+    charactorappearance_y[i] = i * CHARACTORREALHEIGHT;
+    context.moveTo(charactorappearance_x[i], 0);
+    context.lineTo(charactorappearance_x[i], SURFACEHEIGHT);
+    context.moveTo(0, charactorappearance_y[i]);
+    context.lineTo(SURFACEWIDTH, charactorappearance_y[i]);
     context.closePath();
     context.stroke();
   }
@@ -39,11 +49,6 @@ window.onload = function () {
 
   //キャラクターの初期化が必要な場合に立つフラグ
   var initializationflag = false;
-
-  var scoremessage = new Label("up:↑ down:↓ left:← right:→");
-  scoremessage.font = "16px Palatino";
-  scoremessage.x = 10;
-  scoremessage.y = 5;
 
   //ゲーム画面の拡大率を修正
   core.scale = 1;
@@ -53,8 +58,6 @@ window.onload = function () {
   core.keybind(32, "space");
   core.keybind(65, "a");
   core.keybind(67, "c");
-
-  core.rootScene.addChild(scoremessage);
 
   core.onload = function () {
     var kuma = new Sprite(CHARACTORWIDTH, CHARACTORWIDTH);
@@ -95,16 +98,16 @@ window.onload = function () {
         this.vy = this.vx = 0;
         //キー入力を取得し移動を決定
         if (core.input.down) {
-          this.vy = MOVE_DISTANCE;
+          this.vy = MOVE_DISTANCE_Y;
         }
         if (core.input.up) {
-          this.vy = -MOVE_DISTANCE;
+          this.vy = -MOVE_DISTANCE_Y;
         }
         if (core.input.left) {
-          this.vx = -MOVE_DISTANCE;
+          this.vx = -MOVE_DISTANCE_X;
         }
         if (core.input.right) {
-          this.vx = MOVE_DISTANCE;
+          this.vx = MOVE_DISTANCE_X;
         }
 
         if (core.input.shift) {
@@ -139,17 +142,42 @@ window.onload = function () {
       ribbon.y = this.y;
 
       //敵を出現させる
-      if (Math.random() * 100 > 20) {
-        var enemy = new Label("売上");
-        enemy.font = "16px Palatino";
-        enemy.x = 64;
-        enemy.y = 64;
-        core.rootScene.addChild(enemy);
+      while (enemies.length < 10) {
+        core.rootScene.addChild(createEnemy());
       }
+
+      //敵の動作
+      enemies.forEach(function (enemy) {
+        enemy.addEventListener(Event.ENTER_FRAME, function () {
+          enemy.x += enemy.speed;
+          if (enemy.x > 640) {
+            deleteEnemy();
+          }
+        });
+      });
     });
   };
   core.start();
 };
+
+function createEnemy() {
+  enemy = new Label("密");
+  enemy.font = "32px Palatino";
+  enemy.color = "#ffffff";
+  enemy.x = charactorappearance_x[parseInt(Math.random() * 13)];
+  enemy.y = charactorappearance_y[parseInt(Math.random() * 16)];
+
+  //enemyインスタンスにプロパティを追加
+  enemy.hp = 10;
+  enemy.speed = 0.5;
+
+  enemies.push(enemy);
+
+  return enemy;
+}
+function deleteEnemy(i) {
+  enemies.splice(i, 1);
+}
 
 /*
 https://developer.mozilla.org/ja/docs/Web/JavaScript/Guide/Working_with_Objects

@@ -62,7 +62,7 @@ window.onload = function () {
   core.onload = function () {
     var kuma = new Sprite(CHARACTORWIDTH, CHARACTORWIDTH);
     var ribbon = new Sprite(CHARACTORWIDTH, CHARACTORWIDTH);
-    kuma.image = core.assets["./img/cellgirl_body.png"];
+    var enemies = (kuma.image = core.assets["./img/cellgirl_body.png"]);
     ribbon.image = core.assets["./img/cellgirl_ribbon.png"];
     kuma.x = CHARACTORFIRST_X;
     kuma.y = CHARACTORFIRST_Y;
@@ -73,8 +73,6 @@ window.onload = function () {
     kuma.isMoving = false;
     core.rootScene.addChild(kuma);
     core.rootScene.addChild(ribbon);
-
-    showProps(kuma, "kuma");
 
     //フレームごとに実行
     kuma.addEventListener(Event.ENTER_FRAME, function actions() {
@@ -140,20 +138,20 @@ window.onload = function () {
       //リボンの位置を調整
       ribbon.x = this.x;
       ribbon.y = this.y;
+    });
 
-      //敵を出現させる
-      while (enemies.length < 10) {
+    for (var i = 1; i < 10; i++) {
+      enemies[i].addEventListener(Event.ENTER_FRAME, function () {
         core.rootScene.addChild(createEnemy());
-      }
-
-      //敵の動作
-      enemies.forEach(function (enemy) {
-        enemy.addEventListener(Event.ENTER_FRAME, function () {
-          enemy.x += enemy.speed;
-          if (enemy.x > 640) {
-            deleteEnemy();
-          }
-        });
+      });
+    }
+    //敵の動作
+    enemies.forEach(function (enemy) {
+      enemy.addEventListener(Event.ENTER_FRAME, function () {
+        enemy.x += enemy.speed;
+        if (enemy.x > 640) {
+          deleteEnemy(enemies.indexOf(enemy));
+        }
       });
     });
   };
@@ -171,10 +169,12 @@ function createEnemy() {
   enemy.hp = 10;
   enemy.speed = 0.5;
 
+  //敵配列にpushで追加
   enemies.push(enemy);
 
   return enemy;
 }
+
 function deleteEnemy(i) {
   enemies.splice(i, 1);
 }

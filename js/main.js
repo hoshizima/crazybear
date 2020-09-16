@@ -21,14 +21,14 @@ var enemies = [];
 /*メイン処理開始*/
 enchant();
 
-window.onload = function ()
-{
+window.onload = function () {
+  /*ゲームオブジェクトの作成、画像のプリロード*/
   var core = new Core(coreSCENEWIDTH, coreSCENEHEIGHT);
   core.fps = 30;
   core.preload("./img/cellgirl_body.png");
   core.preload("./img/cellgirl_ribbon.png");
 
-  //背景にマス目を表示。
+  /*背景にマス目を表示*/
   var background = new Sprite(SURFACEWIDTH, SURFACEHEIGHT);
   var surface = new Surface(SURFACEWIDTH, SURFACEHEIGHT);
   background.image = surface;
@@ -36,8 +36,7 @@ window.onload = function ()
   context.beginPath();
   context.strokeStyle = "rgb(255, 255, 255)";
   context.lineWidth = 1;
-  for (var i = 0; i < 20; i++)
-  {
+  for (var i = 0; i < 20; i++) {
     charactorappearance_x[i] = i * CHARACTORREALWIDTH;
     charactorappearance_y[i] = i * CHARACTORREALHEIGHT;
     context.moveTo(charactorappearance_x[i], 0);
@@ -49,7 +48,15 @@ window.onload = function ()
   }
   core.rootScene.addChild(background);
 
-  //キャラクターの初期化が必要な場合に立つフラグ
+  /*ＨＰ表示 */
+  var hplabel = new Label("HP:100");
+  hplabel.font = "32px Palatino";
+  hplabel.color = "#ffff00";
+  hplabel.x = 10;
+  hplabel.y = 10;
+  core.rootScene.addChild(hplabel);
+
+  /*キャラクターの初期化フラグ*/
   var initializationflag = false;
 
   //ゲーム画面の拡大率を修正
@@ -61,8 +68,7 @@ window.onload = function ()
   core.keybind(65, "a");
   core.keybind(67, "c");
 
-  core.onload = function ()
-  {
+  core.onload = function () {
     var kuma = new Sprite(CHARACTORWIDTH, CHARACTORWIDTH);
     var ribbon = new Sprite(CHARACTORWIDTH, CHARACTORWIDTH);
     var enemies = (kuma.image = core.assets["./img/cellgirl_body.png"]);
@@ -78,67 +84,52 @@ window.onload = function ()
     core.rootScene.addChild(ribbon);
 
     //kumaへイベント処理を追加
-    kuma.addEventListener(Event.ENTER_FRAME, function actions()
-    {
-      if (initializationflag)
-      {
+    kuma.addEventListener(Event.ENTER_FRAME, function actions() {
+      if (initializationflag) {
         kuma.scaleX = kuma.scaleY = ribbon.scaleX = ribbon.scaleY = 1;
       }
-      if (core.frame % (core.fps / 2) == 0)
-      {
+      if (core.frame % (core.fps / 2) == 0) {
         this.frame++;
       }
-      if (core.frame % (core.fps / 3) == 0)
-      {
+      if (core.frame % (core.fps / 3) == 0) {
         ribbon.frame++;
       }
       this.frame %= 3;
       ribbon.frame %= 3;
       //移動する
-      if (this.isMoving)
-      {
+      if (this.isMoving) {
         this.moveBy(this.vx, this.vy);
         this.isMoving = false;
-      } else
-      {
+      } else {
         //移動距離の初期化
         this.vy = this.vx = 0;
         //キー入力を取得し移動を決定
-        if (core.input.down)
-        {
+        if (core.input.down) {
           this.vy = MOVE_DISTANCE_Y;
         }
-        if (core.input.up)
-        {
+        if (core.input.up) {
           this.vy = -MOVE_DISTANCE_Y;
         }
-        if (core.input.left)
-        {
+        if (core.input.left) {
           this.vx = -MOVE_DISTANCE_X;
         }
-        if (core.input.right)
-        {
+        if (core.input.right) {
           this.vx = MOVE_DISTANCE_X;
         }
 
-        if (core.input.shift)
-        {
-          if (core.input.space)
-          {
+        if (core.input.shift) {
+          if (core.input.space) {
             //shift+spaceの処理
             core.rootScene.backgroundColor = "#ffffff";
           }
         }
 
-        if (core.input.ctrl)
-        {
-          if (core.input.space)
-          {
+        if (core.input.ctrl) {
+          if (core.input.space) {
             //ctrl+spaceの処理
             core.rootScene.backgroundColor = "#000000";
           }
-          if (core.input.a)
-          {
+          if (core.input.a) {
             //ctrl+aの処理
             kuma.scaleX *= 10;
             kuma.scaleY *= 10;
@@ -148,8 +139,7 @@ window.onload = function ()
           }
         }
 
-        if (this.vy || this.vx)
-        {
+        if (this.vy || this.vx) {
           this.isMoving = true;
           actions();
         }
@@ -157,42 +147,48 @@ window.onload = function ()
       //リボンの位置を調整
       ribbon.x = this.x;
       ribbon.y = this.y;
-    });//kuma.addEventListener終了
+    }); //kuma.addEventListener終了
 
-    for (var i = 0; i < 10; i++)
-    {
-      enemies[i].addEventListener(Event.ENTER_FRAME, function ()
-      {
-        core.rootScene.addChild(createEnemy());
-      });
-    }
-    //enemyにイベント処理を実行
-    enemies.forEach(function (enemy)
-    {
-      enemy.addEventListener(Event.ENTER_FRAME, function ()
-      {
+    setInterval(() => {
+      var enemy = createEnemy();
+      core.rootScene.addChild(enemy);
+      enemy.addEventListener(Event.ENTER_FRAME, function () {
         enemy.x += enemy.speed;
-        if (enemy.x > 640)
-        {
-          deleteEnemy();
+        if (enemy.x > 640) {
+          core.rootScene.removeChild(enemy);
+        }
+        if (
+          enemy.x + enemy.hitbox_x > kuma.x &&
+          enemy.y + enemy.hitbox_y > kuma.y &&
+          enemy.x < kuma.x + CHARACTORREALWIDTH &&
+          enemy.y < kuma.y + CHARACTORREALHEIGHT
+        ) {
+          core.rootScene.removeChild(enemy);
+          kuma.hp -= 1;
+          hplabel.text = "HP:" + kuma.hp;
+          core.rootScene.addChild(hplabel);
         }
       });
-    });
-  };//core.onload処理終了
+    }, 100);
+  }; //core.onload処理終了
   core.start();
-};
+}; //window.onload処理終了
 
-function createEnemy()
-{
+/**
+ * 敵オブジェクトを作成します
+ */
+function createEnemy() {
   var enemy = new Label("密");
   enemy.font = "32px Palatino";
   enemy.color = "#ffffff";
-  enemy.x = charactorappearance_x[parseInt(Math.random() * 13)];
-  enemy.y = charactorappearance_y[parseInt(Math.random() * 16)];
+  enemy.hitbox_x = 32;
+  enemy.hitbox_y = 32;
+  enemy.x = 0;
+  enemy.y = charactorappearance_y[parseInt(Math.random() * 19)];
 
   //enemyインスタンスにプロパティを追加
   enemy.hp = 10;
-  enemy.speed = 0.5;
+  enemy.speed = 3 + Math.random() * 3;
 
   //敵配列にpushで追加
   enemies.push(enemy);
@@ -200,23 +196,16 @@ function createEnemy()
   return enemy;
 }
 
-function deleteEnemy(i)
-{
-  enemies.splice(i, 1);
-}
+/**
+ * https://developer.mozilla.org/ja/docs/Web/JavaScript/Guide/Working_with_Objects
+ * オブジェクト変数を引数に入れることでオブジェクト内のプロパティを表示する。
+ */
 
-/*
-https://developer.mozilla.org/ja/docs/Web/JavaScript/Guide/Working_with_Objects
-オブジェクト変数を引数に入れることでオブジェクト内のプロパティを表示する。
-*/
-function showProps(obj, objName)
-{
+function showProps(obj, objName) {
   var result = "";
-  for (var i in obj)
-  {
+  for (var i in obj) {
     // obj.hasOwnProperty() はオブジェクトのプロトタイプチェーンからプロパティを絞り込むために使用しています
-    if (obj.hasOwnProperty(i))
-    {
+    if (obj.hasOwnProperty(i)) {
       result += objName + "." + i + " = " + obj[i] + "\n";
     }
   }

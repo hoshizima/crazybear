@@ -1,8 +1,8 @@
 /*定数定義*/
-const coreSCENEWIDTH = 640;
-const coreSCENEHEIGHT = 640;
-const SURFACEWIDTH = 640;
-const SURFACEHEIGHT = 640;
+const coreSCENEWIDTH = 644;
+const coreSCENEHEIGHT = 644;
+const SURFACEWIDTH = 644;
+const SURFACEHEIGHT = 644;
 const CHARACTORREALWIDTH = 46;
 const CHARACTORREALHEIGHT = 34;
 const CHARACTORWIDTH = 64;
@@ -25,6 +25,7 @@ window.onload = function ()
   /*HTML内要素を取得 */
   var hitpoint = document.getElementById("hitpoint");
   hitpoint.innerHTML = "HP：" + CHARACTORHP;
+  var hitpointbar = document.getElementById("hitpointbar");
   /*ゲームオブジェクトの作成、画像のプリロード*/
   var core = new Core(coreSCENEWIDTH, coreSCENEHEIGHT);
   core.fps = 30;
@@ -188,9 +189,12 @@ window.onload = function ()
           enemy.y < kuma.y + CHARACTORREALHEIGHT
         )
         {
+          /**衝突時の処理 */
           core.rootScene.removeChild(enemy);
-          kuma.hp -= 1;
+          kuma.hp -= 10;
           hitpoint.innerHTML = "HP:" + kuma.hp;
+          hitpointbar.style.width = String(kuma.hp) + "px";
+
           //core.rootScene.addChild(hplabel);
         }
       });

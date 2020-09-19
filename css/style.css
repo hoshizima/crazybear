@@ -1,0 +1,32 @@
+body {
+      padding: 0;
+      margin: 0;
+      background: black;
+    }
+table{
+     margin: auto;
+}
+#gameview{
+    position:static;
+    margin:auto;
+}
+
+#hitpointbar{
+    background-color: green;
+    width: 100px;
+    height: 20px;
+}
+#actionpointbar{
+    background-color: skyblue;
+    width: 100px;
+    height: 20px;
+}
+.statusblock{
+    color: white;
+}
+#enchant-stage{
+    width: 640px;
+    height: 640px;
+    position:static;
+    margin:auto;
+}

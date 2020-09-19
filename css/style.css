@@ -1,32 +1,62 @@
-body {
-      padding: 0;
-      margin: 0;
-      background: black;
-    }
-table{
-     margin: auto;
-}
-#gameview{
-    position:static;
-    margin:auto;
+html {
+  overflow: hidden hidden;
 }
 
-#hitpointbar{
-    background-color: green;
-    width: 100px;
-    height: 20px;
+body {
+  padding: 0;
+  margin: 0;
+  background: black;
+  position: relative;
 }
-#actionpointbar{
-    background-color: skyblue;
-    width: 100px;
-    height: 20px;
+table {
+  margin: auto;
 }
-.statusblock{
-    color: white;
+#gameview {
+  position: relative;
+  margin: auto;
+  top: 0px;
+  left: 0px;
 }
-#enchant-stage{
-    width: 640px;
-    height: 640px;
-    position:static;
-    margin:auto;
+#hitpoint-box {
+  position: relative;
+  margin: auto;
+  top: 0px;
+  left: 0px;
+}
+#hitpointbar-back {
+  position: absolute;
+  background-color: firebrick;
+  width: 100px;
+  height: 20px;
+  z-index: 1;
+}
+#hitpointbar {
+  position: absolute;
+  background-color: green;
+  width: 100px;
+  height: 20px;
+  z-index: 2;
+}
+#actionpointbar-back {
+  position: absolute;
+  background-color: whitesmoke;
+  width: 100px;
+  height: 20px;
+  z-index: 1;
+}
+#actionpointbar {
+  position: absolute;
+  background-color: skyblue;
+  width: 100px;
+  height: 20px;
+  z-index: 2;
+}
+.statusblock {
+  color: white;
+}
+#enchant-stage {
+  width: 640px;
+  height: 640px;
+  position: static;
+  margin: auto;
 }

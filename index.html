@@ -1,41 +1,43 @@
 <!DOCTYPE html>
 <html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"
+    />
+    <link rel="stylesheet" href="./css/style.css" />
+    <script src="./js/lib/enchant.js"></script>
+    <script src="./js/main.js"></script>
+    <style></style>
+    <title>Cell Girl</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
-  <link rel="stylesheet" href="./css/style.css">
-  <script src="./js/lib/enchant.js"></script>
-  <script src="./js/main.js"></script>
-  <style>
-
-  </style>
-  <title>Cell Girl</title>
-</head>
-
-<body>
-  <div id="charactorstatus">
-    <table>
-      <tr>
-        <td>
-          <div id="hitpoint" class="statusblock">HP:100</div>
-        </td>
-        <td>
-          <div id="hitpointbar"></div>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <div id="actionpoint" class="statusblock">AP:100</div>
-        </td>
-        <td>
-          <div id="actionpointbar"></div>
-        </td>
-      </tr>
-
-    </table>
-  </div>
-  <div id="enchant-stage"></div>
-</body>
-
+  <body>
+    <div id="gameview">
+      <div id="charactorstatus">
+        <table>
+          <tr id="hitpoint-box">
+            <td>
+              <div id="hitpoint" class="statusblock">HP:100</div>
+            </td>
+            <td>
+              <div id="hitpointbar-back"></div>
+              <div id="hitpointbar"></div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div id="actionpoint" class="statusblock">AP:100</div>
+            </td>
+            <td>
+              <div id="actionpointbar-back"></div>
+              <div id="actionpointbar"></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="enchant-stage"></div>
+    </div>
+  </body>
 </html>

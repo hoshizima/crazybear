@@ -87,6 +87,7 @@ window.onload = function () {
     kuma.hp = CHARACTORHP;
     kuma.ap = CHARACTORAP;
     kuma.isMoving = false;
+    kuma.directionkey = [0, 0, 0, 0];
     core.rootScene.addChild(kuma);
     core.rootScene.addChild(ribbon);
 
@@ -130,35 +131,33 @@ window.onload = function () {
         //キー入力を取得し移動を決定
         if (core.input.down) {
           this.vy = MOVE_DISTANCE_Y;
-          this.directionkey[0] = true;
-        } else {
-          this.directionkey[0] = false;
+          //   this.directionkey[0] = true;
+          // } else {
+          //   this.directionkey[0] = false;
         }
         if (core.input.up) {
           this.vy = -MOVE_DISTANCE_Y;
-          this.directionkey[1] = true;
-        } else {
-          this.directionkey[1] = false;
+          //   this.directionkey[1] = true;
+          // } else {
+          //   this.directionkey[1] = false;
         }
         if (core.input.left) {
           this.vx = -MOVE_DISTANCE_X;
-          this.directionkey[2] = true;
-        } else {
-          this.directionkey[2] = false;
+          //   this.directionkey[2] = true;
+          // } else {
+          //   this.directionkey[2] = false;
         }
         if (core.input.right) {
           this.vx = MOVE_DISTANCE_X;
-          this.directionkey[3] = true;
-        } else {
-          this.directionkey[3] = false;
+          //   this.directionkey[3] = true;
+          // } else {
+          //   this.directionkey[3] = false;
         }
 
         if (core.input.shift) {
           if (core.input.space) {
             //shift+spaceの処理
-            
           }
-          if()
         }
 
         if (core.input.ctrl) {

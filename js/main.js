@@ -1,4 +1,15 @@
-/*定数定義*/
+/**
+ * クラス定義
+ */
+class Hitbox {
+  constructor(width, height) {
+    this.width = width;
+    this.height = height;
+  }
+}
+/**
+ * 定数定義
+ */
 const coreSCENEWIDTH = 640;
 const coreSCENEHEIGHT = 640;
 const SURFACEWIDTH = 640;
@@ -94,7 +105,7 @@ window.onload = function () {
       var label = new Label("Game Over Click to Retry");
       label.textAlign = "center";
       label.color = "#ffffff";
-      label.font = "40px impact";
+      label.font = "25px impact";
       label.moveTo((core.width - label._boundWidth) / 2, 320);
       scene.addChild(label);
       scene.backgroundColor = "rgba(255,255,255,0.3)";
@@ -104,7 +115,9 @@ window.onload = function () {
       return scene;
     };
 
-    /**ゲームシーンの作成 */
+    /**
+     * ゲームシーンの作成
+     */
     var createGameScene = function () {
       var mainscene = new Scene();
       /*背景にマス目を表示*/
@@ -127,30 +140,27 @@ window.onload = function () {
       }
       mainscene.addChild(background);
 
-      /*canvas内ＨＰ表示 */
-      // var hplabel = new Label("HP:100");
-      // hplabel.font = "32px Palatino";
-      // hplabel.color = "#ffff00";
-      // hplabel.x = 10;
-      // hplabel.y = 10;
-      // core.mainscene.addChild(hplabel);
+      initializationflag = false;
+      hitpointbar.style.width = "100px";
+      hitpoint.innerHTML = "HP:100";
 
-      /*キャラクターの初期化フラグ*/
-      var initializationflag = false;
       var kuma = new Sprite(CHARACTORWIDTH, CHARACTORWIDTH);
       var ribbon = new Sprite(CHARACTORWIDTH, CHARACTORWIDTH);
+      var kuma_dummy = new Sprite(CHARACTORREALWIDTH, CHARACTORREALHEIGHT);
       kuma.image = core.assets["./img/cellgirl_body.png"];
       ribbon.image = core.assets["./img/cellgirl_ribbon.png"];
       kuma.x = CHARACTORFIRST_X;
       kuma.y = CHARACTORFIRST_Y;
       ribbon.x = CHARACTORFIRST_X;
       ribbon.y = CHARACTORFIRST_Y;
+      kuma_dummy.x = kuma.x + (kuma.width - kuma_dummy.width) / 2;
+      kuma_dummy.y = kuma.y + (kuma.height - kuma_dummy.height) / 2;
       kuma.hp = CHARACTORHP;
       kuma.ap = CHARACTORAP;
       kuma.isMoving = false;
-      kuma.directionkey = [0, 0, 0, 0];
       mainscene.addChild(kuma);
       mainscene.addChild(ribbon);
+      mainscene.addChild(kuma_dummy);
 
       //kumaへイベント処理を追加
       kuma.addEventListener(Event.ENTER_FRAME, function actions() {
@@ -207,26 +217,29 @@ window.onload = function () {
             actions();
           }
         }
-        //リボンの位置を調整
+        //リボン,ヒットボックスの位置を調整
         ribbon.x = this.x;
         ribbon.y = this.y;
+        kuma_dummy.x = this.x + (this.width - kuma_dummy.width) / 2;
+        kuma_dummy.y = this.y + (this.height - kuma_dummy.height) / 2;
       }); //kuma.addEventListener終了
       setInterval(() => {
         var enemy = createEnemy();
+        var enemy_dummy = new Sprite(32, 32);
+        enemy_dummy.x = enemy.x;
+        enemy_dummy.y = enemy.y;
         mainscene.addChild(enemy);
+        mainscene.addChild(enemy_dummy);
         enemy.addEventListener(Event.ENTER_FRAME, function () {
           enemy.x += enemy.speed;
+          enemy_dummy.x += enemy.speed;
           if (enemy.x > 640) {
             mainscene.removeChild(enemy);
           }
-          if (
-            enemy.x + enemy.hitbox_x > kuma.x &&
-            enemy.y + enemy.hitbox_y > kuma.y &&
-            enemy.x < kuma.x + CHARACTORREALWIDTH &&
-            enemy.y < kuma.y + CHARACTORREALHEIGHT
-          ) {
+          if (enemy_dummy.intersect(kuma_dummy)) {
             /**衝突時の処理 */
             mainscene.removeChild(enemy);
+            mainscene.removeChild(enemy_dummy);
             kuma.hp -= 10;
             hitpoint.innerHTML = "HP:" + kuma.hp;
             hitpointbar.style.width = String(kuma.hp) + "px";
@@ -262,7 +275,6 @@ window.onload = function () {
   }; //core.onload処理終了
   core.start();
 }; //window.onload処理終了
-
 /**
  * 敵オブジェクトを作成します
  */

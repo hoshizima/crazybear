@@ -32,7 +32,6 @@ table {
   z-index: 1;
 }
 #hitpointbar {
-  position: absolute;
   background-color: green;
   width: 100px;
   height: 20px;
@@ -46,7 +45,6 @@ table {
   z-index: 1;
 }
 #actionpointbar {
-  position: absolute;
   background-color: skyblue;
   width: 100px;
   height: 20px;

@@ -1,8 +1,8 @@
 /*定数定義*/
-const coreSCENEWIDTH = 644;
-const coreSCENEHEIGHT = 644;
-const SURFACEWIDTH = 644;
-const SURFACEHEIGHT = 644;
+const coreSCENEWIDTH = 640;
+const coreSCENEHEIGHT = 640;
+const SURFACEWIDTH = 640;
+const SURFACEHEIGHT = 640;
 const CHARACTORREALWIDTH = 46;
 const CHARACTORREALHEIGHT = 34;
 const CHARACTORWIDTH = 64;
@@ -17,19 +17,44 @@ const DAMAGE_REACTION_ARRAY = [
   [2, -2, 1, 0],
   [2, -2, 1, 0],
 ];
+/**15X15のフィールドステータス配列 */
+/**
+ * 0:normal
+ * 1:charactor
+ * 2:enemy
+ * 3:shield
+ * 4:bullet
+ */
+var field_status_array = [
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+];
 var charactorappearance_x = [];
 var charactorappearance_y = [];
 var enemies = [];
 /*メイン処理開始*/
 enchant();
 
-window.onload = function ()
-{
+window.onload = function () {
   /*HTML内要素を取得 */
   var hitpoint = document.getElementById("hitpoint");
   hitpoint.innerHTML = "HP：" + CHARACTORHP;
   var hitpointbar = document.getElementById("hitpointbar");
   var gameview = document.getElementById("gameview");
+
   /*ゲームオブジェクトの作成、画像のプリロード*/
   var core = new Core(coreSCENEWIDTH, coreSCENEHEIGHT);
   core.fps = 30;
@@ -38,6 +63,7 @@ window.onload = function ()
 
   //ゲーム画面の拡大率を修正
   //core.scale = 1;
+
   //キーバインド
   core.keybind(16, "shift");
   core.keybind(17, "ctrl");
@@ -45,44 +71,41 @@ window.onload = function ()
   core.keybind(65, "a");
   core.keybind(67, "c");
 
-  core.onload = function ()
-  {
-
-
+  //Core（Game）のロード後処理
+  core.onload = function () {
     /**タイトルシーンの作成 */
-    var createTitleScene = function ()
-    {
+    var createTitleScene = function () {
       var scene = new Scene();
       var label = new Label("Click to start");
       label.textAlign = "center";
       label.color = "#ffffff";
+      label.font = "40px impact";
+      label.moveTo((core.width - label._boundWidth) / 2, 320);
       scene.addChild(label);
-      scene.backgroundColor = "rgba(255,255,255,0.3)"
-      scene.addEventListener(Event.TOUCH_START, function (e)
-      {
+      scene.backgroundColor = "rgba(255,255,255,0.3)";
+      scene.addEventListener(Event.TOUCH_START, function (e) {
         core.replaceScene(createGameScene());
-      })
+      });
       return scene;
-    }
+    };
     /**ゲームオーバーシーンの作成 */
-    var createGameOverScene = function ()
-    {
+    var createGameOverScene = function () {
       var scene = new Scene();
-      var label = new Label("Game Over");
+      var label = new Label("Game Over Click to Retry");
       label.textAlign = "center";
       label.color = "#ffffff";
+      label.font = "40px impact";
+      label.moveTo((core.width - label._boundWidth) / 2, 320);
       scene.addChild(label);
-      scene.backgroundColor = "rgba(255,255,255,0.3)"
-      scene.addEventListener(Event.TOUCH_START, function (e)
-      {
+      scene.backgroundColor = "rgba(255,255,255,0.3)";
+      scene.addEventListener(Event.TOUCH_START, function (e) {
         core.replaceScene(createTitleScene());
-      })
+      });
       return scene;
-    }
+    };
 
     /**ゲームシーンの作成 */
-    var createGameScene = function ()
-    {
+    var createGameScene = function () {
       var mainscene = new Scene();
       /*背景にマス目を表示*/
       var background = new Sprite(SURFACEWIDTH, SURFACEHEIGHT);
@@ -92,8 +115,7 @@ window.onload = function ()
       context.beginPath();
       context.strokeStyle = "rgb(255, 255, 255)";
       context.lineWidth = 1;
-      for (var i = 0; i < 20; i++)
-      {
+      for (var i = 0; i < 20; i++) {
         charactorappearance_x[i] = i * CHARACTORREALWIDTH;
         charactorappearance_y[i] = i * CHARACTORREALHEIGHT;
         context.moveTo(charactorappearance_x[i], 0);
@@ -131,78 +153,46 @@ window.onload = function ()
       mainscene.addChild(ribbon);
 
       //kumaへイベント処理を追加
-      kuma.addEventListener(Event.ENTER_FRAME, function actions()
-      {
-        if (initializationflag)
-        {
+      kuma.addEventListener(Event.ENTER_FRAME, function actions() {
+        if (initializationflag) {
           kuma.scaleX = kuma.scaleY = ribbon.scaleX = ribbon.scaleY = 1;
         }
-        if (core.frame % (core.fps / 2) == 0)
-        {
+        if (core.frame % (core.fps / 2) == 0) {
           this.frame++;
         }
-        if (core.frame % (core.fps / 3) == 0)
-        {
+        if (core.frame % (core.fps / 3) == 0) {
           ribbon.frame++;
         }
         this.frame %= 3;
         ribbon.frame %= 3;
         //移動する
-        if (this.isMoving)
-        {
+        if (this.isMoving) {
           this.moveBy(this.vx, this.vy);
           this.isMoving = false;
-        } else
-        {
+        } else {
           //移動距離の初期化
           this.vy = this.vx = 0;
           //キー入力を取得し移動を決定
-          if (core.input.down)
-          {
-            this.vy = MOVE_DISTANCE_Y;
-            //   this.directionkey[0] = true;
-            // } else {
-            //   this.directionkey[0] = false;
-          }
-          if (core.input.up)
-          {
-            this.vy = -MOVE_DISTANCE_Y;
-            //   this.directionkey[1] = true;
-            // } else {
-            //   this.directionkey[1] = false;
-          }
-          if (core.input.left)
-          {
-            this.vx = -MOVE_DISTANCE_X;
-            //   this.directionkey[2] = true;
-            // } else {
-            //   this.directionkey[2] = false;
-          }
-          if (core.input.right)
-          {
-            this.vx = MOVE_DISTANCE_X;
-            //   this.directionkey[3] = true;
-            // } else {
-            //   this.directionkey[3] = false;
-          }
+          this.vy =
+            Number(core.input.down) * MOVE_DISTANCE_Y +
+            -1 * Number(core.input.up) * MOVE_DISTANCE_Y;
+          this.vx =
+            Number(core.input.right) * MOVE_DISTANCE_X +
+            -1 * Number(core.input.left) * MOVE_DISTANCE_X;
 
-          if (core.input.shift)
-          {
-            if (core.input.space)
-            {
+          if (core.input.shift) {
+            if (core.input.space) {
               //shift+spaceの処理
+              showProps(this, "kum");
             }
           }
 
-          if (core.input.ctrl)
-          {
-            if (core.input.space)
-            {
+          if (core.input.ctrl) {
+            if (core.input.space) {
               //ctrl+spaceの処理
               core.mainscene.backgroundColor = "#000000";
             }
-            if (core.input.a)
-            {
+            if (core.input.a) {
               //ctrl+aの処理
               kuma.scaleX *= 10;
               kuma.scaleY *= 10;
@@ -212,8 +202,7 @@ window.onload = function ()
             }
           }
 
-          if (this.vy || this.vx)
-          {
+          if (this.vy || this.vx) {
             this.isMoving = true;
             actions();
           }
@@ -221,20 +210,13 @@ window.onload = function ()
         //リボンの位置を調整
         ribbon.x = this.x;
         ribbon.y = this.y;
-        if (kuma.hp <= 0)
-        {
-          createGameOverScene();
-        }
       }); //kuma.addEventListener終了
-      setInterval(() =>
-      {
+      setInterval(() => {
         var enemy = createEnemy();
         mainscene.addChild(enemy);
-        enemy.addEventListener(Event.ENTER_FRAME, function ()
-        {
+        enemy.addEventListener(Event.ENTER_FRAME, function () {
           enemy.x += enemy.speed;
-          if (enemy.x > 640)
-          {
+          if (enemy.x > 640) {
             mainscene.removeChild(enemy);
           }
           if (
@@ -242,29 +224,29 @@ window.onload = function ()
             enemy.y + enemy.hitbox_y > kuma.y &&
             enemy.x < kuma.x + CHARACTORREALWIDTH &&
             enemy.y < kuma.y + CHARACTORREALHEIGHT
-          )
-          {
+          ) {
             /**衝突時の処理 */
             mainscene.removeChild(enemy);
             kuma.hp -= 10;
             hitpoint.innerHTML = "HP:" + kuma.hp;
             hitpointbar.style.width = String(kuma.hp) + "px";
             gameviewshake();
+            if (kuma.hp <= 0) {
+              core.replaceScene(createGameOverScene());
+            }
             //core.mainscene.addChild(hplabel);
           }
         });
       }, 100);
       return mainscene;
-    }//ゲームシーンの作成終了
+    }; //ゲームシーンの作成終了
 
     /**関数定義 */
     //ダメージを受けた際に画面を揺らす
-    var gameviewshake = function ()
-    {
+    var gameviewshake = function () {
       var DAMAGE_REACTION_ARRAY_counter_top = 0;
       var DAMAGE_REACTION_ARRAY_counter_left = 0;
-      setInterval(() =>
-      {
+      setInterval(() => {
         gameview.style.top =
           String(DAMAGE_REACTION_ARRAY[0][DAMAGE_REACTION_ARRAY_counter_top]) +
           "px";
@@ -284,10 +266,9 @@ window.onload = function ()
 /**
  * 敵オブジェクトを作成します
  */
-function createEnemy()
-{
+function createEnemy() {
   var enemy = new Label("密");
-  enemy.font = "32px Palatino";
+  enemy.font = "32px impact";
   enemy.color = "#ffffff";
   enemy.hitbox_x = 32;
   enemy.hitbox_y = 32;
@@ -303,20 +284,25 @@ function createEnemy()
 
   return enemy;
 }
+/**
+ * シールドオブジェクトを作成します
+ */
+function createShield() {
+  var shield = new Sprite(CHARACTORWIDTH, CHARACTORWIDTH);
+  shield.image = core.assets["./img/cellgirl_body.png"];
+  shield.frame = 7;
+}
 
 /**
  * https://developer.mozilla.org/ja/docs/Web/JavaScript/Guide/Working_with_Objects
  * オブジェクト変数を引数に入れることでオブジェクト内のプロパティを表示する。
  */
 
-function showProps(obj, objName)
-{
+function showProps(obj, objName) {
   var result = "";
-  for (var i in obj)
-  {
+  for (var i in obj) {
     // obj.hasOwnProperty() はオブジェクトのプロトタイプチェーンからプロパティを絞り込むために使用しています
-    if (obj.hasOwnProperty(i))
-    {
+    if (obj.hasOwnProperty(i)) {
       result += objName + "." + i + " = " + obj[i] + "\n";
     }
   }

@@ -1,13 +1,4 @@
 /**
- * クラス定義
- */
-class Hitbox {
-  constructor(width, height) {
-    this.width = width;
-    this.height = height;
-  }
-}
-/**
  * 定数定義
  */
 const coreSCENEWIDTH = 640;
@@ -64,6 +55,10 @@ window.onload = function () {
   var hitpoint = document.getElementById("hitpoint");
   hitpoint.innerHTML = "HP：" + CHARACTORHP;
   var hitpointbar = document.getElementById("hitpointbar");
+  var actionpoint = document.getElementById("actionpoint");
+  actionpoint.innerHTML = "AP：" + CHARACTORAP;
+  var actionpointbar = document.getElementById("actionpointbar");
+
   var gameview = document.getElementById("gameview");
 
   /*ゲームオブジェクトの作成、画像のプリロード*/
@@ -190,7 +185,27 @@ window.onload = function () {
             Number(core.input.right) * MOVE_DISTANCE_X +
             -1 * Number(core.input.left) * MOVE_DISTANCE_X;
 
+          /**
+           * shiftを入力した際の処理
+           */
           if (core.input.shift) {
+            if (kuma.ap >= 10) {
+              kuma.ap = kuma.ap - 10;
+              actionpoint.innerHTML = "AP:" + kuma.ap;
+              actionpointbar.style.width = String(kuma.ap) + "px";
+              var shield = new Sprite(CHARACTORWIDTH, CHARACTORWIDTH);
+              shield.image = core.assets["./img/cellgirl_body.png"];
+              shield.frame = 7;
+              shield.x = kuma.x;
+              shield.y = kuma.y;
+              shield.hp = 100;
+              mainscene.insertBefore(shield, kuma);
+              var shield_dummy = new Sprite(
+                CHARACTORREALWIDTH,
+                CHARACTORREALHEIGHT
+              );
+              mainscene.addChild(shield_dummy);
+            }
             if (core.input.space) {
               //shift+spaceの処理
               showProps(this, "kum");
@@ -295,14 +310,6 @@ function createEnemy() {
   enemies.push(enemy);
 
   return enemy;
-}
-/**
- * シールドオブジェクトを作成します
- */
-function createShield() {
-  var shield = new Sprite(CHARACTORWIDTH, CHARACTORWIDTH);
-  shield.image = core.assets["./img/cellgirl_body.png"];
-  shield.frame = 7;
 }
 
 /**
